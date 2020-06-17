@@ -26,7 +26,6 @@ ENV LC_ALL ru_RU.UTF-8
 ENV LANG ru_RU.UTF-8
 ENV LANGUAGE ru_RU.UTF-8
 
-ADD beau.dict /opt/beau.dict
 ADD entrypoint.sh /opt/entrypoint.sh
 ADD app.py /opt/app.py
 
