@@ -4,7 +4,7 @@ import os
 from io import BytesIO
 
 from flask import Flask, request, json
-from pocketsphinx import Pocketsphinx
+from pocketsphinx import Pocketsphinx, get_model_path
 
 
 class PocketSphinx(Pocketsphinx):
@@ -17,11 +17,11 @@ class PocketSphinx(Pocketsphinx):
 
 
 def ps_init():
-    main_dir = os.path.join('/opt', 'zero_ru_cont_8k_v3')
+    model_path = get_model_path()
     config = {
-        'hmm': os.path.join(main_dir, 'zero_ru.cd_ptm_4000'),
-        'lm': os.path.join(main_dir, 'ru.lm'),
-        'dict': os.path.join(main_dir, 'ru.dic'),
+        'hmm': os.path.join(model_path, 'en-us'),
+        'lm': os.path.join(model_path, 'en-us.lm.bin'),
+        'dict': os.path.join(model_path, 'cmudict-en-us.dict'),
     }
     return PocketSphinx(**config)
 

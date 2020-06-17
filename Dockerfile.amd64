@@ -3,28 +3,30 @@ FROM amd64/ubuntu:bionic
 ARG RUNTIME_PACKAGES="python3 locales libasound2 apulse"
 ARG BUILD_PACKAGES="git build-essential swig libpulse-dev libasound2-dev python3-dev wget python3-pip python3-setuptools"
 
-RUN apt-get update -y && \
-    apt-get -y install --no-install-recommends $RUNTIME_PACKAGES && \
-    apt-mark manual $(apt-mark showauto) && \
-    apt-get -y install --no-install-recommends $BUILD_PACKAGES && \
-    cd /usr/share/locale/ && ls | grep -v 'ru\|en\|locale.alias' | xargs rm -rf && \
-    locale-gen ru_RU.UTF-8 && \
-    pip3 install flask pocketsphinx && \
-    wget -q https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/Russian/zero_ru_cont_8k_v3.tar.gz/download -O /opt/zero_ru_cont_8k_v3.tar.gz && \
-    tar -xzf /opt/zero_ru_cont_8k_v3.tar.gz -C /opt/ && \
-    apt-get remove --purge -y $BUILD_PACKAGES $(apt-mark showauto) && \
+RUN apt-get update -y
+RUN    apt-get -y install --no-install-recommends $RUNTIME_PACKAGES
+RUN    apt-mark manual $(apt-mark showauto)
+RUN    apt-get -y install --no-install-recommends $BUILD_PACKAGES 
+RUN    cd /usr/share/locale/ && ls | grep -v 'ru\|en\|locale.alias' | xargs rm -rf
+RUN    locale-gen ru_RU.UTF-8 
+RUN    pip3 install wheel
+RUN    pip3 install flask pocketsphinx 
+RUN    wget -q https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/US%20English/cmusphinx-en-us-8khz-5.2.tar.gz/download -O /opt/zero_ru_cont_8k_v3.tar.gz && \
+    tar -xzf /opt/zero_ru_cont_8k_v3.tar.gz -C /opt/
+RUN    apt-get remove --purge -y $BUILD_PACKAGES $(apt-mark showauto) && \
     apt-get autoremove -y && \
     apt-get -y install --no-install-recommends $RUNTIME_PACKAGES && \
-    apt-get clean && \
-    rm /opt/zero_ru_cont_8k_v3/decoder-test.sh /opt/zero_ru_cont_8k_v3/decoder-test.wav /opt/zero_ru_cont_8k_v3.tar.gz && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp /usr/share/doc/* /usr/share/info/* /usr/lib/python*/test \
-    /usr/local/lib/python*/dist-packages/pocketsphinx/model /usr/local/lib/python*/dist-packages/pocketsphinx/data \
-    /opt/zero_ru_cont_8k_v3/zero_ru.cd_cont_4000 /opt/zero_ru_cont_8k_v3/zero_ru.cd_semi_4000 /root/.cache/*
+    apt-get clean
+#RUN rm /opt/zero_ru_cont_8k_v3/decoder-test.sh /opt/zero_ru_cont_8k_v3/decoder-test.wav /opt/zero_ru_cont_8k_v3.tar.gz
+#RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp /usr/share/doc/* /usr/share/info/* /usr/lib/python*/test \
+#    /usr/local/lib/python*/dist-packages/pocketsphinx/model /usr/local/lib/python*/dist-packages/pocketsphinx/data \
+#    /opt/zero_ru_cont_8k_v3/zero_ru.cd_cont_4000 /opt/zero_ru_cont_8k_v3/zero_ru.cd_semi_4000 /root/.cache/*
 
 ENV LC_ALL ru_RU.UTF-8
 ENV LANG ru_RU.UTF-8
 ENV LANGUAGE ru_RU.UTF-8
 
+ADD beau.dict /opt/beau.dict
 ADD entrypoint.sh /opt/entrypoint.sh
 ADD app.py /opt/app.py
 
